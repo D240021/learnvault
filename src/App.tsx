@@ -2,15 +2,58 @@ import { Button, Icon, Layout } from "@stellar/design-system"
 import { Routes, Route, Outlet, NavLink } from "react-router-dom"
 import styles from "./App.module.css"
 import ConnectAccount from "./components/ConnectAccount"
+import CourseCard from "./components/CourseCard"
 import { labPrefix } from "./contracts/util"
 import Debug from "./pages/Debug"
 import Home from "./pages/Home"
+// NAYA IMPORT: Apna CourseCard yahan import karo
+
+// TESTING KE LIYE DUMMY PAGE (Sirf UI check karne ke liye)
+const CourseCatalog = () => (
+	<div style={{ padding: "24px" }}>
+		<h1 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "24px" }}>
+			Course Catalog
+		</h1>
+		{/* CSS Grid for Responsive Cards */}
+		<div
+			style={{
+				display: "grid",
+				gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+				gap: "24px",
+			}}
+		>
+			<CourseCard
+				id="1"
+				title="Soroban Smart Contracts"
+				description="Learn how to build scalable decentralized apps on Stellar using Rust and Soroban."
+				difficulty="intermediate"
+				estimatedHours={5}
+				lrnReward={200}
+				lessonCount={12}
+				isEnrolled={false}
+				onEnroll={() => alert("Enrolled in Soroban!")}
+			/>
+			<CourseCard
+				id="2"
+				title="DeFi Fundamentals"
+				description="Understand the core concepts of Decentralized Finance and automated market makers."
+				difficulty="beginner"
+				estimatedHours={3}
+				lrnReward={100}
+				lessonCount={8}
+				isEnrolled={true}
+			/>
+		</div>
+	</div>
+)
 
 function App() {
 	return (
 		<Routes>
 			<Route element={<AppLayout />}>
 				<Route path="/" element={<Home />} />
+				{/* NAYA ROUTE: Yahan tumhara component dikhega */}
+				<Route path="/courses" element={<CourseCatalog />} />
 				<Route path="/debug" element={<Debug />} />
 				<Route path="/debug/:contractName" element={<Debug />} />
 			</Route>
@@ -26,6 +69,16 @@ const AppLayout: React.FC = () => (
 			disableSetThemeOnLoad
 			contentCenter={
 				<>
+					{/* NAYA BUTTON NAVBAR MEIN */}
+					<NavLink to="/courses">
+						{({ isActive }) => (
+							<Button variant="tertiary" size="md" disabled={isActive}>
+								<Icon.BookOpen01 size="md" />
+								Courses
+							</Button>
+						)}
+					</NavLink>
+
 					<NavLink to="/debug">
 						{({ isActive }) => (
 							<Button variant="tertiary" size="md" disabled={isActive}>
@@ -59,6 +112,7 @@ const AppLayout: React.FC = () => (
 					href="https://github.com/theahaco/scaffold-stellar"
 					className="Link Link--secondary"
 					target="_blank"
+					rel="noreferrer"
 				>
 					<Icon.GitPullRequest size="sm" /> GitHub
 				</a>
@@ -66,6 +120,7 @@ const AppLayout: React.FC = () => (
 					href="https://www.youtube.com/watch?v=0syGaIn3ULk&list=PLmr3tp_7-7Gjj6gn5-bBn-QTMyaWzwOU5"
 					className="Link Link--secondary"
 					target="_blank"
+					rel="noreferrer"
 				>
 					<Icon.Youtube size="sm" /> Tutorial
 				</a>
@@ -73,6 +128,7 @@ const AppLayout: React.FC = () => (
 					href="https://scaffoldstellar.org"
 					className="Link Link--secondary"
 					target="_blank"
+					rel="noreferrer"
 				>
 					<Icon.BookOpen01 size="sm" /> View docs
 				</a>
