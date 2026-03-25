@@ -12,6 +12,7 @@ import { eventsRouter } from "./routes/events.routes";
 import { healthRouter } from "./routes/health.routes";
 import { validatorRouter } from "./routes/validator.routes";
 import { commentsRouter } from "./routes/comments.routes";
+import { leaderboardRouter } from "./routes/leaderboard.routes";
 import { initDb } from "./db/index";
 
 
@@ -39,6 +40,7 @@ app.use("/api", coursesRouter);
 app.use("/api", validatorRouter);
 app.use("/api", eventsRouter);
 app.use("/api", commentsRouter);
+app.use("/api", leaderboardRouter);
 
 
 app.get("/api/docs", (_req, res) => {
