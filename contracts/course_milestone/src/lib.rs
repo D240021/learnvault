@@ -6,9 +6,6 @@ use soroban_sdk::{
     panic_with_error, symbol_short,
 };
 
-const ADMIN_KEY: Symbol = symbol_short!("ADMIN");
-
-#[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
     Enrollment(Address, String),
@@ -41,12 +38,8 @@ pub struct SubmittedEventData {
     pub evidence_uri: String,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-#[contracttype]
-pub struct EnrolledEventData {
-    pub learner: Address,
-    pub course_id: String,
-}
+const ADMIN_KEY: Symbol = symbol_short!("ADMIN");
+const LEARN_TOKEN_KEY: Symbol = symbol_short!("LRN_TKN");
 
 #[contracterror]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -54,9 +47,33 @@ pub struct EnrolledEventData {
 pub enum Error {
     AlreadyInitialized = 1,
     NotInitialized = 2,
-    AlreadyEnrolled = 3,
-    NotEnrolled = 4,
-    DuplicateSubmission = 5,
+    Unauthorized = 3,
+    CourseNotFound = 4,
+    MilestoneAlreadyCompleted = 5,
+    CourseAlreadyComplete = 6,
+    InvalidMilestones = 7,
+    CourseAlreadyExists = 8,
+}
+
+#[contractevent]
+pub struct MilestoneCompleted {
+    pub learner: Address,
+    pub course_id: u32,
+    pub milestones_completed: u32,
+    pub tokens_minted: i128,
+}
+
+#[contractevent]
+pub struct CourseCompleted {
+    pub learner: Address,
+    pub course_id: u32,
+}
+
+#[contractevent]
+pub struct CourseAdded {
+    pub course_id: u32,
+    pub total_milestones: u32,
+    pub tokens_per_milestone: i128,
 }
 
 #[contract]
@@ -64,7 +81,7 @@ pub struct CourseMilestone;
 
 #[contractimpl]
 impl CourseMilestone {
-    pub fn initialize(env: Env, admin: Address) {
+    pub fn initialize(env: Env, admin: Address, learn_token_contract: Address) {
         if env.storage().instance().has(&ADMIN_KEY) {
             panic_with_error!(&env, Error::AlreadyInitialized);
         }
@@ -204,6 +221,8 @@ impl CourseMilestone {
         }
     }
 }
+
+pub use learn_token_client::LearnTokenClient;
 
 #[cfg(test)]
 mod test;
